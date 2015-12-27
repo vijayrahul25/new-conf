@@ -4,9 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
 var routes = require('./server/routes/index');
 var users = require('./server/routes/users');
+var test = require('./server/routes/test');
+var speakers = require('./server/routes/speakers');
+var config = require('./server/config/config.js');
 
 var app = express();
 
@@ -25,6 +29,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/test', test);
+app.use('/api/speakers', speakers);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -61,6 +67,11 @@ app.set('port', process.env.PORT || 3000);
 var server = app.listen(app.get('port'), function() {
 console.log('Express server listening on port ' + server.
 address().port);
+});
+
+mongoose.connect(config.url);
+mongoose.connection.on('error', function() {
+console.error('MongoDB Connection Error. Make sure MongoDB is running.');
 });
 
 
